@@ -36,6 +36,7 @@ const start = async () => {
       process.env.FRONTEND_URL ?? 'http://localhost:3000',
       'https://wedecide.in',
       'https://www.wedecide.in',
+      /\.vercel\.app$/, // Allow all Vercel deployments
     ],
     credentials: true,
   });
