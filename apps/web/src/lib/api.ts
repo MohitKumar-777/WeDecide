@@ -74,7 +74,7 @@ export function postComment(predictionId: string, body: string, token: string) {
 
 // ─── NEWS ──────────────────────────────────────────────────
 export function getNews(query: string) {
-  return fetchApi<ApiResponse<any[]>>(`/api/v1/news?q=${encodeURIComponent(query)}`);
+  return fetchApi<ApiResponse<unknown[]>>(`/api/v1/news?q=${encodeURIComponent(query)}`);
 }
 
 // ─── CATEGORIES ─────────────────────────────────────────────
@@ -174,7 +174,7 @@ export function verifyOtp(phone: string, otp: string) {
 
 // ─── ADMIN ─────────────────────────────────────────────────
 export function resolvePrediction(id: string, outcome: boolean, token: string) {
-  return fetchApi<{ data: any }>(`/api/admin/predictions/${id}/resolve`, {
+  return fetchApi<{ data: unknown }>(`/api/admin/predictions/${id}/resolve`, {
     method: 'PATCH',
     headers: { Authorization: `Bearer ${token}` },
     body: JSON.stringify({ outcome }),
@@ -182,7 +182,7 @@ export function resolvePrediction(id: string, outcome: boolean, token: string) {
 }
 
 export function triggerAMM(token: string) {
-  return fetchApi<{ data: any }>('/api/admin/trigger-amm', {
+  return fetchApi<{ data: unknown }>('/api/admin/trigger-amm', {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` }
   });

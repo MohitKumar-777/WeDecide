@@ -120,7 +120,9 @@ export function useRealtimeActivity(
   onActivity: ActivityCallback
 ) {
   const onActivityRef = useRef(onActivity);
-  onActivityRef.current = onActivity;
+  useEffect(() => {
+    onActivityRef.current = onActivity;
+  });
 
   useEffect(() => {
     const channel = supabase
@@ -171,7 +173,9 @@ export function useRealtimeActivity(
 // ─── CONNECTION STATUS ────────────────────────────────────────
 export function useConnectionStatus(onStatusChange: (status: 'connected' | 'connecting' | 'disconnected') => void) {
   const onStatusRef = useRef(onStatusChange);
-  onStatusRef.current = onStatusChange;
+  useEffect(() => {
+    onStatusRef.current = onStatusChange;
+  });
 
   useEffect(() => {
     onStatusRef.current('connecting');

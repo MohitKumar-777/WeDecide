@@ -48,11 +48,12 @@ export function useVote(predictionId: string, initialUserVote?: boolean | null) 
       });
 
       // Update all prediction list caches
-      queryClient.setQueriesData({ queryKey: ['predictions'] }, (oldData: any) => {
-        if (!oldData?.data) return oldData;
+      queryClient.setQueriesData({ queryKey: ['predictions'] }, (oldData: unknown) => {
+        const data = oldData as { data: PredictionWithVote[] } | undefined;
+        if (!data?.data) return oldData;
         return {
-          ...oldData,
-          data: oldData.data.map((p: PredictionWithVote) =>
+          ...data,
+          data: data.data.map((p: PredictionWithVote) =>
             p.id === predictionId ? computeNewStats(p) : p
           ),
         };
