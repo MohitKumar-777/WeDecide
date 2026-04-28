@@ -32,12 +32,7 @@ const start = async () => {
   await app.register(helmet);
 
   await app.register(cors, {
-    origin: [
-      process.env.FRONTEND_URL ?? 'http://localhost:3000',
-      'https://wedecide.in',
-      'https://www.wedecide.in',
-      /\.vercel\.app$/, // Allow all Vercel deployments
-    ],
+    origin: true, // Temporarily allow all origins for debugging
     credentials: true,
   });
 
