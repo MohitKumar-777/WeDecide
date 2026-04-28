@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { getPredictions, getLeaderboard, getNews, getCategories } from '@/lib/api';
@@ -474,7 +474,7 @@ function FeedContent({ searchInput }: { searchInput: string }) {
                     <span style={{ fontFamily: 'var(--font-mono)', fontSize: '12px', color: 'var(--text-dim)', width: '20px', flexShrink: 0 }}>#{entry.rank}</span>
                     <div style={{ flex: 1, minWidth: 0 }}>
                       <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--text)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{entry.user.display_name ?? entry.user.username}</div>
-                      <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>{entry.user.tier} · {entry.user.accuracy_pct.toFixed(1)}%</div>
+                      <div style={{ fontSize: '10px', color: 'var(--text-dim)' }}>{entry.user.tier} Â· {entry.user.accuracy_pct.toFixed(1)}%</div>
                     </div>
                     <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--accent)' }}>{entry.user.predict_score.toLocaleString()}</span>
                   </a>
@@ -585,5 +585,3 @@ export default function HomePage() {
     </div>
   );
 }
-/ /   T r i g g e r i n g   f i n a l   d e p l o y m e n t   w i t h   u p d a t e d   p r i m a r y   i d e n t i t y  
- 
