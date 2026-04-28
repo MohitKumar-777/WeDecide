@@ -32,10 +32,10 @@ async function sendSmsOtp(phone: string, otp: string): Promise<void> {
       }
     });
 
-    const result = await response.json().catch(() => ({}));
+    const result = await response.json().catch(() => ({})) as any;
     console.log(`[MSG91] Attempted send to ${mobile}. Result:`, JSON.stringify(result));
 
-    if (result.type === 'error') {
+    if (result && result.type === 'error') {
       console.error(`[MSG91] Error: ${result.message}`);
     }
   } catch (err) {
