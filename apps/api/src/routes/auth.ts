@@ -23,9 +23,16 @@ async function sendSmsOtp(phone: string, otp: string): Promise<void> {
     return;
   }
 
-  await fetch(`https://api.msg91.com/api/v5/otp?template_id=${templateId}&mobile=91${phone}&authkey=${authKey}&otp=${otp}`, {
+  const response = await fetch(`https://api.msg91.com/api/v5/otp?template_id=${templateId}&mobile=91${phone}&authkey=${authKey}&otp=${otp}`, {
     method: 'POST',
   });
+  
+  const result = await response.json().catch(() => ({}));
+  console.log('[MSG91] Response:', JSON.stringify(result));
+
+  if (!response.ok) {
+    console.error('[MSG91] Failed to send OTP:', response.statusText);
+  }
 }
 
 const authRoute: FastifyPluginAsync = async (app) => {
