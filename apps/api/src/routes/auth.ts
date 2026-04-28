@@ -85,46 +85,54 @@ const authRoute: FastifyPluginAsync = async (app) => {
 
     otpStore.delete(phone);
 
-    // Find or create user
-    let { data: user } = await db
-      .from('users')
-      .select('*')
-      .eq('phone', phone)
-      .maybeSingle();
-
-    const isNewUser = !user;
-
-    if (!user) {
-      const username = `user_${Date.now().toString(36)}`;
-      const { data: newUser, error } = await db
+    try {
+      // Find or create user
+      let { data: user, error: fetchError } = await db
         .from('users')
-        .insert({ phone, username })
-        .select()
-        .single();
+        .select('*')
+        .eq('phone', phone)
+        .maybeSingle();
 
-      if (error || !newUser) {
-        return reply.status(500).send({ error: { code: 'USER_CREATE_FAILED', message: 'Failed to create user', statusCode: 500 } });
+      if (fetchError) {
+        return reply.status(500).send({ error: { code: 'DB_FETCH_FAILED', message: fetchError.message, statusCode: 500 } });
       }
-      user = newUser;
+
+      const isNewUser = !user;
+
+      if (!user) {
+        const username = `user_${Date.now().toString(36)}`;
+        const { data: newUser, error: insertError } = await db
+          .from('users')
+          .insert({ phone, username })
+          .select()
+          .single();
+
+        if (insertError || !newUser) {
+          return reply.status(500).send({ error: { code: 'USER_CREATE_FAILED', message: insertError?.message || 'Failed to create user', statusCode: 500 } });
+        }
+        user = newUser;
+      }
+
+      // Issue JWT (15 min access token)
+      const role = phone === '9999999999' ? 'admin' : 'user';
+      
+      const accessToken = app.jwt.sign({
+        sub:      user.id,
+        role:     role,
+        username: user.username,
+        tier:     user.tier,
+      });
+
+      return reply.send({
+        access_token:  accessToken,
+        refresh_token: 'refresh_' + Math.random().toString(36).slice(2),
+        user,
+        isNewUser,
+      });
+    } catch (err: any) {
+      console.error('[AUTH_ERROR]', err);
+      return reply.status(500).send({ error: { code: 'INTERNAL_AUTH_ERROR', message: err.message, statusCode: 500 } });
     }
-
-    // Issue JWT (15 min access token)
-    // Make 9999999999 an admin for testing resolution
-    const role = phone === '9999999999' ? 'admin' : 'user';
-    
-    const accessToken = app.jwt.sign({
-      sub:      user.id,
-      role:     role,
-      username: user.username,
-      tier:     user.tier,
-    });
-
-    return reply.send({
-      access_token:  accessToken,
-      refresh_token: 'refresh_' + Math.random().toString(36).slice(2),
-      user,
-      isNewUser,
-    });
   });
 };
 
