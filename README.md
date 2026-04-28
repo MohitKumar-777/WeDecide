@@ -27,33 +27,28 @@ This project follows a monorepo architecture:
 - `supabase/`: Database migrations and schema definitions.
 - `docker-compose.yml`: Full-stack orchestration.
 
-## 🚦 Getting Started
+## 🚀 Deployment
 
-### Prerequisites
+We recommend deploying **WeDecide** using a combination of **Vercel** and **Render** for optimal performance and reliability.
 
-- Node.js 18+
-- Docker & Docker Compose
-- Supabase Account
+### 1. Backend Deployment (Render)
+The backend is Dockerized and ready for [Render](https://render.com).
+1. Connect your repository to Render.
+2. Render will automatically detect the `render.yaml` file and prompt you to create the **wedecide-api** service.
+3. Add the following Environment Variables in the Render dashboard:
+   - `SUPABASE_URL`
+   - `SUPABASE_SERVICE_KEY`
+   - `UPSTASH_REDIS_URL`
+   - `MSG91_AUTH_KEY`
+   - `MSG91_TEMPLATE_ID`
 
-### Installation
-
-1. **Clone the repository**:
-   ```bash
-   git clone https://github.com/MohitKumar-777/WeDecide.git
-   ```
-
-2. **Configure Environment Variables**:
-   Create `.env` files in `apps/web` and `apps/api` based on the provided examples.
-
-3. **Spin up services**:
-   ```bash
-   docker-compose up -d
-   ```
-
-4. **Install Dependencies**:
-   ```bash
-   npm install
-   ```
+### 2. Frontend Deployment (Vercel)
+Deploy the Next.js app to [Vercel](https://vercel.com).
+1. Import the repository and select `apps/web` as the **Root Directory**.
+2. Add these Environment Variables:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+   - `NEXT_PUBLIC_API_URL` (Link to your Render API URL)
 
 ## 📜 License
 
