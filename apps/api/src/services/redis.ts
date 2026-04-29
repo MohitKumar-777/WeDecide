@@ -1,7 +1,11 @@
 import { Redis } from 'ioredis';
 
 // Upstash Redis client (serverless-compatible)
-export const redis = new Redis(process.env.UPSTASH_REDIS_URL ?? 'redis://localhost:6379', {
+if (!process.env.UPSTASH_REDIS_URL) {
+  throw new Error('UPSTASH_REDIS_URL is required in production');
+}
+
+export const redis = new Redis(process.env.UPSTASH_REDIS_URL, {
   password: process.env.UPSTASH_REDIS_TOKEN,
   tls: process.env.UPSTASH_REDIS_URL?.startsWith('rediss') ? {} : undefined,
   lazyConnect: true,

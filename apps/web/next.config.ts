@@ -38,7 +38,7 @@ const nextConfig: NextConfig = {
     return [
       {
         source:      '/api/v1/:path*',
-        destination: `${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}/api/v1/:path*`,
+        destination: `${process.env.NEXT_PUBLIC_API_URL || 'https://wedecide-api.onrender.com'}/api/v1/:path*`,
       },
     ];
   },

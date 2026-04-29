@@ -22,7 +22,7 @@ export default function ConnectionStatus() {
     const probe = async () => {
       const start = performance.now();
       try {
-        await fetch(`${process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001'}/health`, { cache: 'no-store' });
+        await fetch(`${process.env.NEXT_PUBLIC_API_URL || 'https://wedecide-api.onrender.com'}/health`, { cache: 'no-store' });
         setLatency(Math.round(performance.now() - start));
       } catch {
         setLatency(null);
