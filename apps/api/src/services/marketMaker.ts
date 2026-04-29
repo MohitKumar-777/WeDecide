@@ -136,13 +136,29 @@ export async function runMarketMaker() {
       for (const item of items) {
         if (item.skip) continue;
 
+        // Slow down to avoid Groq rate limits
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        // Clean up category for DB (ensure it's one of: Sports, Politics, Economy, Technology, World)
+        const allowed = ['Sports', 'Politics', 'Economy', 'Technology', 'World'];
+        let category = source.category;
+        
+        // Map common variations to allowed categories
+        if (category === 'Markets' || category === 'Crypto') category = 'Economy';
+        if (category === 'Science') category = 'Technology';
+        if (category === 'Geopolitics') category = 'World';
+        
+        if (!allowed.includes(category)) {
+          category = 'World'; // Safe fallback
+        }
+
         // Try AI, fallback to heuristics
-        let marketData = await generateWithAI(item.title, source.category);
+        let marketData = await generateWithAI(item.title, category);
         if (marketData) {
           console.log(`[AMM] ${source.type.toUpperCase()} -> Groq generated:`, marketData.question);
         }
         if (!marketData) {
-          marketData = generateWithHeuristics(item.title, source.category);
+          marketData = generateWithHeuristics(item.title, category);
         }
 
         // Resolves in 7 days
@@ -152,14 +168,16 @@ export async function runMarketMaker() {
         // Insert into database
         const { data, error } = await db.from('predictions').insert({
           question: marketData.question,
-          category: source.category,
+          category: category,
           difficulty: marketData.difficulty,
           status: 'open',
           resolves_at: resolvesAt.toISOString(),
           source_url: item.url,
         }).select('id');
 
-        if (!error && data) {
+        if (error) {
+          console.error(`[AMM] Database Error for ${category}:`, JSON.stringify(error));
+        } else if (data) {
           createdCount++;
         }
       }

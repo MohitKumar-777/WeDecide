@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { getPredictions, getLeaderboard, getNews, getCategories } from '@/lib/api';
@@ -22,7 +22,7 @@ function LiveNewsFeed() {
   const { data, isLoading } = useQuery({
     queryKey: ['news-sidebar', 'India trending'],
     queryFn: () => getNews('India trending politics cricket sports'),
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000,
   });
 
   const items: { title: string; source: string; link: string; time?: string }[] =

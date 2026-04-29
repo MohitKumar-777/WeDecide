@@ -58,6 +58,11 @@ const newsRoute: FastifyPluginAsync = async (app) => {
         };
       });
 
+      // Ensure strict sorting by date
+      articles.sort((a, b) => {
+        return new Date(b.pubDate ?? 0).getTime() - new Date(a.pubDate ?? 0).getTime();
+      });
+
       return reply.send({ data: articles, requestId: request.id });
     } catch (err) {
       app.log.error(err);
