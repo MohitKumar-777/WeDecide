@@ -198,6 +198,7 @@ function FeedContent({ searchInput }: { searchInput: string }) {
       return lastPage.meta?.hasMore ? allPages.length + 1 : undefined;
     },
     initialPageParam: 1,
+    staleTime: 30 * 1000,
   });
 
   const allPredictions = data?.pages.flatMap((page) => page.data ?? []) ?? [];

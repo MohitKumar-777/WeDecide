@@ -50,20 +50,34 @@ export async function atomicVote(
   const yes = choice ? Number(results[0][1]) : Number(results[0][1] ?? 0);
   const no  = choice ? Number(results[1][1] ?? 0) : Number(results[1][1]);
 
+  voteCache.set(predictionId, { yes, no, expiresAt: Date.now() + 5000 });
+  
   return { yes, no };
 }
+
+// ─── LOCAL CACHE ──────────────────────────────────────────
+const voteCache = new Map<string, { yes: number; no: number; expiresAt: number }>();
 
 /** Get live vote counts (fast path — never hits DB) */
 export async function getVoteCounts(
   predictionId: string
 ): Promise<{ yes: number; no: number } | null> {
+  const now = Date.now();
+  const cached = voteCache.get(predictionId);
+  if (cached && cached.expiresAt > now) {
+    return { yes: cached.yes, no: cached.no };
+  }
+
   const [yes, no] = await redis.mget(
     keys.predictionYes(predictionId),
     keys.predictionNo(predictionId)
   );
 
   if (yes === null && no === null) return null; // cache miss
-  return { yes: Number(yes ?? 0), no: Number(no ?? 0) };
+  
+  const result = { yes: Number(yes ?? 0), no: Number(no ?? 0) };
+  voteCache.set(predictionId, { ...result, expiresAt: now + 5000 }); // 5s cache
+  return result;
 }
 
 /** Seed Redis with DB counts (called when cache is cold) */
